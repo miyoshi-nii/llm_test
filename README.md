@@ -25,6 +25,14 @@ How a decoder-only Transformer trained only on next-token prediction becomes a g
   "Training Compute-Optimal Large Language Models." NeurIPS 2022.
   [arXiv:2203.15556](https://arxiv.org/abs/2203.15556) / Notebook: [docs/gpt2.ipynb](docs/gpt2.ipynb) (Section 11)
 
+### 3. Parameter-Efficient Fine-Tuning: LoRA
+
+Adapting a pretrained model by freezing its weights and training only a low-rank update ΔW = BA, which cuts the trainable parameters by orders of magnitude and can be merged back into the weights at no inference cost (LoRA).
+
+- **LoRA**: Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, Weizhu Chen.
+  "LoRA: Low-Rank Adaptation of Large Language Models." ICLR 2022.
+  [arXiv:2106.09685](https://arxiv.org/abs/2106.09685) / Official code: [microsoft/LoRA](https://github.com/microsoft/LoRA) / Notebook: [docs/lora.ipynb](docs/lora.ipynb)
+
 ## Notebooks
 
 All notebooks live in [docs/](docs/). Read them in this order:
@@ -33,3 +41,4 @@ All notebooks live in [docs/](docs/). Read them in this order:
 |---|---|---|
 | [transformer.ipynb](docs/transformer.ipynb) | A from-scratch NumPy forward pass of the encoder–decoder Transformer with random weights (no training), checking each equation numerically: embeddings and sinusoidal positional encoding, scaled dot-product attention and why it divides by √d_k, causal and padding masks, multi-head attention, permutation equivariance, LayerNorm (Post-LN vs. Pre-LN), the FFN, cross-attention, the weight-tied output layer, greedy decoding with a KV cache, and parameter and FLOP counts | CPU (Colab) |
 | [gpt2.ipynb](docs/gpt2.ipynb) | GPT-2 small (124M) implemented from scratch in NumPy and loaded with the official pretrained weights, verified against `transformers`: byte-level BPE, learned position embeddings, Pre-LN blocks, next-token prediction, attention sinks, previous-token and induction heads, the logit lens, massive activations, KV-cache decoding with greedy / temperature / top-k / top-p sampling, and scaling laws (C ≈ 6ND checked by counting FLOPs, Kaplan's power laws, Chinchilla's compute-optimal allocation) | CPU (Colab) |
+| [lora.ipynb](docs/lora.ipynb) | LoRA from the equations up: parameter count, zero-initialized B, rank ≤ r, merging, and gradients as projections of the full fine-tuning gradient (checked numerically); a toy regression where the loss reached at each rank matches the Eckart–Young bound; then a hand-written LoRA layer on GPT-2 small trained for a few dozen steps on fictional facts, checking frozen base weights, merge / unmerge, switching the adapter on and off, a 1 MB adapter file, agreement with `peft`, and learning vs. forgetting compared with full fine-tuning | CPU (Colab; a GPU makes Section 4 faster) |
